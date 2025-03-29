@@ -95,11 +95,12 @@ export default function Page() {
   }
 
   return (
-    <div className="container mx-auto my-4">
+    <div className="container m-8">
       <div>
         <h1>SJSU GPA Calculator</h1>
+        <h2>A simple and intuitive GPA calculator for SJSU students</h2>
+        <p>Calculate your grades by going into your Canvas page, and on the Card view of your dashboard, you will find a button to view grades. Take a screenshot and upload it here!</p>
       </div>
-      <br />
       {!loading && grades.length === 0 && (
         <div>
           <Input type="file" accept="image/*" onChange={handleUpload} />
@@ -130,7 +131,6 @@ export default function Page() {
               ))}
             </TableBody>
           </Table>
-          <br />
           <Card>
             <CardHeader>
               <CardTitle>Academic Summary</CardTitle>
