@@ -95,52 +95,58 @@ export default function Page() {
   }
 
   return (
-    <div className="container m-8">
+    <div className="flex flex-col items-center m-8">
       <div>
-        <h1>SJSU GPA Calculator</h1>
-        <h2>A simple and intuitive GPA calculator for SJSU students</h2>
-        <p>Calculate your grades by going into your Canvas page, and on the Card view of your dashboard, you will find a button to view grades. Take a screenshot and upload it here!</p>
-      </div>
-      {!loading && grades.length === 0 && (
-        <div>
-          <Input type="file" accept="image/*" onChange={handleUpload} />
+        <div className="mb-4">
+          <h1>SJSU GPA Calculator</h1>
+          <h2>A simple and intuitive GPA calculator for SJSU students</h2>
+          <p>
+            Calculate your grades by going into your Canvas page, and on the
+            Card view of your dashboard, you will find a button to view grades.
+            Take a screenshot and upload it here!
+          </p>
         </div>
-      )}
-      {loading && <p>Loading</p>}
-      {!loading && grades.length !== 0 && (
-        <div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Class</TableHead>
-                <TableHead>Semester</TableHead>
-                <TableHead>Number Grade</TableHead>
-                <TableHead>Letter Grade</TableHead>
-                <TableHead>GPA</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {grades.map((grade, index) => (
-                <TableRow key={index}>
-                  <TableCell>{`${grade.subject} ${grade.code}`}</TableCell>
-                  <TableCell>{`${grade.semester} ${grade.year}`}</TableCell>
-                  <TableCell>{grade.grade}</TableCell>
-                  <TableCell>{grade.letter}</TableCell>
-                  <TableCell>{grade.gpa}</TableCell>
+        {!loading && grades.length === 0 && (
+          <div>
+            <Input type="file" accept="image/*" onChange={handleUpload} />
+          </div>
+        )}
+        {loading && <p>Loading</p>}
+        {!loading && grades.length !== 0 && (
+          <div>
+            <Table className="mb-4">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Class</TableHead>
+                  <TableHead>Semester</TableHead>
+                  <TableHead>Number Grade</TableHead>
+                  <TableHead>Letter Grade</TableHead>
+                  <TableHead>GPA</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Card>
-            <CardHeader>
-              <CardTitle>Academic Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {`Overall GPA: ${(totalGPA || 0) / grades.length}`}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+              </TableHeader>
+              <TableBody>
+                {grades.map((grade, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{`${grade.subject} ${grade.code}`}</TableCell>
+                    <TableCell>{`${grade.semester} ${grade.year}`}</TableCell>
+                    <TableCell>{grade.grade}</TableCell>
+                    <TableCell>{grade.letter}</TableCell>
+                    <TableCell>{grade.gpa}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <Card>
+              <CardHeader>
+                <CardTitle>Academic Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {`Overall GPA: ${(totalGPA || 0) / grades.length}`}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
