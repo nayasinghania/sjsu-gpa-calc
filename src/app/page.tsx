@@ -1,18 +1,15 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { createWorker } from "tesseract.js";
-import { Grade } from "@/app/types";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type React from "react"
+
+import { useState } from "react"
+import { createWorker } from "tesseract.js"
+import type { Grade } from "@/app/types"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Upload } from "lucide-react"
 
 const gradeTable = [
   { number: 97, letter: "A+", gpa: 4.0 },
@@ -28,125 +25,155 @@ const gradeTable = [
   { number: 64, letter: "D", gpa: 1.0 },
   { number: 60, letter: "D-", gpa: 0.7 },
   { number: 0, letter: "F", gpa: 0.0 },
-];
+]
 const numberToLetter = (number: number) => {
   for (const item of gradeTable) {
     if (number >= item.number) {
-      return item.letter;
+      return item.letter
     }
   }
-};
+}
 
 const numberToGPA = (number: number) => {
   for (const item of gradeTable) {
     if (number >= item.number) {
-      return item.gpa;
+      return item.gpa
     }
   }
-};
+}
 
 export default function Page() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [grades, setGrades] = useState<Grade[]>([]);
-  const [totalGPA, setTotalGPA] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false)
+  const [grades, setGrades] = useState<Grade[]>([])
+  const [totalGPA, setTotalGPA] = useState<number>(0)
 
   function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0]
     if (file) {
-      setLoading(true);
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+      setLoading(true)
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
       reader.onloadend = () => {
-        (async () => {
-          const worker = await createWorker("eng");
-          const ret = await worker.recognize(reader.result as string);
-          console.log(ret.data.text);
-          const tempGrades: Grade[] = [];
-          let tempTotal = 0;
+        ;(async () => {
+          const worker = await createWorker("eng")
+          const ret = await worker.recognize(reader.result as string)
+          console.log(ret.data.text)
+          const tempGrades: Grade[] = []
+          let tempTotal = 0
           for (const line of ret.data.text.split("\n")) {
-            const items = line.split(" ");
+            const items = line.split(" ")
             if (line.includes("SP25")) {
-              tempTotal +=
-                numberToGPA(Number(items[items.length - 1].split("%")[0])) || 0;
+              tempTotal += numberToGPA(Number(items[items.length - 1].split("%")[0])) || 0
               tempGrades.push({
                 subject: items[1].split("-")[0],
                 code: items[1].split("-")[1],
                 semester: line[0] + line[1],
                 year: Number("20" + line[2] + line[3]),
                 grade: Number(items[items.length - 1].split("%")[0]),
-                letter:
-                  numberToLetter(
-                    Number(items[items.length - 1].split("%")[0]),
-                  ) || "",
-                gpa:
-                  numberToGPA(Number(items[items.length - 1].split("%")[0])) ||
-                  0,
-              });
-              console.log(tempGrades);
+                letter: numberToLetter(Number(items[items.length - 1].split("%")[0])) || "",
+                gpa: numberToGPA(Number(items[items.length - 1].split("%")[0])) || 0,
+              })
+              console.log(tempGrades)
             }
           }
-          setGrades(tempGrades);
-          setTotalGPA(tempTotal);
-          setLoading(false);
-          await worker.terminate();
-        })();
-      };
+          setGrades(tempGrades)
+          setTotalGPA(tempTotal)
+          setLoading(false)
+          await worker.terminate()
+        })()
+      }
     }
   }
 
   return (
-    <div className="flex flex-col items-center m-8">
-      <div>
-        <div className="mb-4">
-          <h1>SJSU GPA Calculator</h1>
-          <h2>A simple and intuitive GPA calculator for SJSU students</h2>
-          <p>
-            Calculate your grades by going into your Canvas page, and on the
-            Card view of your dashboard, you will find a button to view grades.
-            Take a screenshot and upload it here!
-          </p>
-        </div>
-        {!loading && grades.length === 0 && (
-          <div>
-            <Input type="file" accept="image/*" onChange={handleUpload} />
+    <div className="container mx-auto py-8 px-4 max-w-4xl">
+      <Card className="shadow-md border-0">
+        <CardContent className="p-6">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold tracking-tight mb-2">SJSU GPA Calculator</h1>
+            <p className="text-lg text-muted-foreground mb-4">
+              A simple and intuitive GPA calculator for SJSU students
+            </p>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Calculate your grades by going into your Canvas page, and on the Card view of your dashboard, you will
+              find a button to view grades. Take a screenshot and upload it here!
+            </p>
           </div>
-        )}
-        {loading && <p>Loading</p>}
-        {!loading && grades.length !== 0 && (
-          <div>
-            <Table className="mb-4">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Semester</TableHead>
-                  <TableHead>Number Grade</TableHead>
-                  <TableHead>Letter Grade</TableHead>
-                  <TableHead>GPA</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {grades.map((grade, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{`${grade.subject} ${grade.code}`}</TableCell>
-                    <TableCell>{`${grade.semester} ${grade.year}`}</TableCell>
-                    <TableCell>{grade.grade}</TableCell>
-                    <TableCell>{grade.letter}</TableCell>
-                    <TableCell>{grade.gpa}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <Card>
-              <CardHeader>
-                <CardTitle>Academic Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {`Overall GPA: ${(totalGPA || 0) / grades.length}`}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div>
+
+          {!loading && grades.length === 0 && (
+            <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg border-muted">
+              <Upload className="h-10 w-10 text-muted-foreground mb-4" />
+              <label htmlFor="file-upload" className="cursor-pointer">
+                <Input id="file-upload" type="file" accept="image/*" onChange={handleUpload} />
+              </label>
+            </div>
+          )}
+
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-pulse flex flex-col items-center">
+                <div className="h-12 w-12 rounded-full bg-muted mb-4"></div>
+                <p className="text-muted-foreground">Processing your grades...</p>
+              </div>
+            </div>
+          )}
+
+          {!loading && grades.length !== 0 && (
+            <div className="space-y-6">
+              <Card className="overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="font-medium">Class</TableHead>
+                      <TableHead className="font-medium">Semester</TableHead>
+                      <TableHead className="font-medium text-right">Number Grade</TableHead>
+                      <TableHead className="font-medium text-right">Letter Grade</TableHead>
+                      <TableHead className="font-medium text-right">GPA</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {grades.map((grade, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{`${grade.subject} ${grade.code}`}</TableCell>
+                        <TableCell>{`${grade.semester} ${grade.year}`}</TableCell>
+                        <TableCell className="text-right">{grade.grade}%</TableCell>
+                        <TableCell className="text-right">{grade.letter}</TableCell>
+                        <TableCell className="text-right">{grade.gpa.toFixed(1)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Card>
+
+              <Card className="bg-primary/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Academic Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Overall GPA</span>
+                    <span className="text-2xl font-bold">{((totalGPA || 0) / grades.length).toFixed(2)}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setGrades([])
+                    setTotalGPA(0)
+                  }}
+                  className="mt-2"
+                >
+                  Calculate Another
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }
+
