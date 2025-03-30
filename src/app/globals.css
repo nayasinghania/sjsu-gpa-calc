@@ -114,15 +114,9 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border ouutline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-  }
-  h1 {
-    @apply text-4xl;
-  }
-  h2 {
-    @apply text-2xl;
+    @apply dark:bg-black bg-white text-foreground;
   }
 }

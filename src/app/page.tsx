@@ -87,8 +87,8 @@ export default function Page() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <Card className="shadow-md border-0">
-        <CardContent className="p-6">
+      <Card className="border-0">
+        <CardContent>
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight mb-2">SJSU GPA Calculator</h1>
             <p className="text-lg text-muted-foreground mb-4">
@@ -120,55 +120,37 @@ export default function Page() {
 
           {!loading && grades.length !== 0 && (
             <div className="space-y-6">
-              <Card className="overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="font-medium">Class</TableHead>
-                      <TableHead className="font-medium">Semester</TableHead>
-                      <TableHead className="font-medium text-right">Number Grade</TableHead>
-                      <TableHead className="font-medium text-right">Letter Grade</TableHead>
-                      <TableHead className="font-medium text-right">GPA</TableHead>
+                      <TableHead>Class</TableHead>
+                      <TableHead>Semester</TableHead>
+                      <TableHead>Number Grade</TableHead>
+                      <TableHead>Letter Grade</TableHead>
+                      <TableHead>GPA</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {grades.map((grade, index) => (
                       <TableRow key={index}>
-                        <TableCell className="font-medium">{`${grade.subject} ${grade.code}`}</TableCell>
+                        <TableCell>{`${grade.subject} ${grade.code}`}</TableCell>
                         <TableCell>{`${grade.semester} ${grade.year}`}</TableCell>
-                        <TableCell className="text-right">{grade.grade}%</TableCell>
-                        <TableCell className="text-right">{grade.letter}</TableCell>
-                        <TableCell className="text-right">{grade.gpa.toFixed(1)}</TableCell>
+                        <TableCell>{grade.grade}%</TableCell>
+                        <TableCell>{grade.letter}</TableCell>
+                        <TableCell>{grade.gpa.toFixed(1)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </Card>
 
-              <Card className="bg-primary/5">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Academic Summary</CardTitle>
+              <Card className="bg-secondary text-center">
+                <CardHeader>
+                  <CardTitle className="text-2xl">Overall GPA</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Overall GPA</span>
-                    <span className="text-2xl font-bold">{((totalGPA || 0) / grades.length).toFixed(2)}</span>
-                  </div>
+                  <span className="text-2xl">{((totalGPA || 0) / grades.length).toFixed(2)}/4.00</span>
                 </CardContent>
               </Card>
-
-              <div className="flex justify-center">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setGrades([])
-                    setTotalGPA(0)
-                  }}
-                  className="mt-2"
-                >
-                  Calculate Another
-                </Button>
-              </div>
             </div>
           )}
         </CardContent>
